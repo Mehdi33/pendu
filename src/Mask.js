@@ -2,10 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import './Mask.css'
 
-const Mask = ({ guesses }) => <div className="guesses">{guesses}</div>
+const Mask = ({ phrase }) => <div className="phrase">{phrase}</div>
 
 Mask.propTypes = {
-  guesses: PropTypes.number.isRequired,
+  phrase: PropTypes.string,
 }
 
 export default Mask
