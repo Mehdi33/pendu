@@ -1,4 +1,11 @@
 import React, { Component } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Jumbotron from "react-bootstrap/Jumbotron"
+import ButtonToolbar from 'react-bootstrap/ButtonToolbar'
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Mask from './Mask'
 import Dash from './Dash'
 
@@ -6,9 +13,9 @@ import './App.css';
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const allword = ["NOMBRE","GEANTE","CORAUX","ROULEAU","EJECTER","LIVRETS",
-              "DIVISION","LICORNES","FOURNEAU","EMPLETTE","CLEPSYDRE","INDIGENES",
-              "ECLATANTE","MATERIAUX","ANAGRAMME","ULTERIEURE","FACTORISER",
-              "RACCROCHER","HIPPOPOTAME","SAUTERELLES"]
+"DIVISION","LICORNES","FOURNEAU","EMPLETTE","CLEPSYDRE","INDIGENES",
+"ECLATANTE","MATERIAUX","ANAGRAMME","ULTERIEURE","FACTORISER",
+"RACCROCHER","HIPPOPOTAME","SAUTERELLES"]
 
 class App extends Component {
 
@@ -44,29 +51,88 @@ class App extends Component {
 
   // Arrow fx for binding
   handleLetterClick = index => {
-    
+    const { usedLetters } = this.state
+    this.setState({ usedLetters: [...usedLetters, index] })
+
+  }
+
+  getFeedbackForLetter(index) {
+    const { usedLetters } = this.state
+
+    if (usedLetters.includes(index)) {
+      return 'utilisé'
+    }
+
+    return 'inutilisé'
+  }
+
+  isWon() {
+    const { phrase, usedLetters } = this.state
+    const mask = this.computeDisplay(phrase, usedLetters)
+    let count = 0
+    let pos = mask.indexOf("_")
+    while (pos !== -1) {
+      count++
+      pos = mask.indexOf("_", pos + 1)
+    }
+    return count === 0
+  }
+
+  initGame() {
+
+    this.setState({
+      phrase: this.generateWords(),
+      clavier: this.generateKeyboard(),
+      usedLetters: [],
+    })
   }
 
   render() {
     const { phrase, usedLetters, clavier } = this.state
-    console.log(clavier)
+    let isWon = this.isWon()
+
     return (
-      <div className="pendu">
-        <div className="mask">
-          <Mask
-          phrase={this.computeDisplay(phrase, usedLetters)}
-          />
-        </div>
-        <div className="dash">
-        {clavier.map((letter, index) => (
-          <Dash
-          letter={letter}
-          index={index}
-          onClick={this.handleLetterClick}
-          />
-        ))}
-        </div>
-      </div>
+      <Container className="p-12">
+
+      <Jumbotron>
+      <h1 className="header mask">
+      <Mask
+      phrase={this.computeDisplay(phrase, usedLetters)}
+      />
+      </h1>
+      </Jumbotron>
+      <Row className="justify-content-md-center">
+
+      <ButtonToolbar aria-label="Toolbar with button groups">
+      <ButtonGroup aria-label="Basic example">
+      <Col>
+      {!isWon && clavier.map((letter, index) => (
+        <Dash
+        letter={letter}
+        feedback={this.getFeedbackForLetter(letter)}
+        index={index}
+        key={index}
+        onClick={this.handleLetterClick}
+        />
+      ))}
+      {isWon && (
+        <Row className="justify-content-md-center">
+        <Col>
+        Gagné !
+        </Col>
+        <Row className="justify-content-md-center">
+
+        <Col>
+        <button className="btn btn-primary form-control" onClick={() => this.initGame()}>Rejouer ?</button>
+        </Col>
+        </Row>
+        </Row>
+      )}
+      </Col>
+      </ButtonGroup>
+      </ButtonToolbar>
+      </Row>
+      </Container>
 
     )
   }
