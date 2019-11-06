@@ -118,7 +118,7 @@ class App extends Component {
       {isWon && (
         <Row className="justify-content-md-center">
         <Col>
-        Gagné !
+        Gagné !!
         </Col>
         <Row className="justify-content-md-center">
 
